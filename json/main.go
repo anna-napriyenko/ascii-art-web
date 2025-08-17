@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+
 )
 
 type Person struct {
@@ -14,6 +15,10 @@ func main() {
 	encodeJson()
 	decodeJson()
 	decodeIntoMap()
+	encodingSliceOfStructs()
+	encodingJsonWithIndent()
+	decodeIntoSlice()
+	encodeStructsWithOmitEmpty()
 }
 
 func encodeJson() {
@@ -35,9 +40,10 @@ func decodeJson() {
 	err := json.Unmarshal(jsonData, &person)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
-	fmt.Println("Decode JSON")
+	fmt.Println("\nDecode JSON")
 	fmt.Println(person)
 }
 
@@ -52,4 +58,66 @@ func decodeIntoMap() {
 	}
 	fmt.Println("\nDecode JSON into map: ")
 	fmt.Println(data)
+}
+
+func encodingSliceOfStructs() {
+	persons := []Person{
+		{Name: "John", Age: 32},
+		{Name: "Liam", Age: 34},
+	}
+
+	jsonData, err := json.Marshal(persons)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("\nEncoding clice of Structs: ")
+	fmt.Println(string(jsonData))
+}
+
+func encodingJsonWithIndent() {
+	person := Person{Name: "John", Age: 32}
+
+	jsonData, err := json.MarshalIndent(person, "", " ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("\nEncoding JSON with indent:")
+	fmt.Println(string(jsonData))
+
+}
+
+func decodeIntoSlice()  {
+	jsonData := []byte(`[{"name":"Anna", "age":32}, {"name":"Anna", "age":32}]`)
+
+	var data []Person
+	err:=json.Unmarshal(jsonData, &data)
+	if err!=nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("\nDecoding JSON into slice:")
+
+	for _, person := range data {
+		fmt.Printf("Name: %s\nAge: %d\n", person.Name, person.Age)
+		fmt.Println()
+	}
+	fmt.Println(data)
+}
+
+func encodeStructsWithOmitEmpty()  {
+	person := Person{Name: "John"}
+
+	jsonData, err := json.Marshal(person)
+	if err!=nil {
+		fmt.Println(err)
+		return
+	}
+	
+	fmt.Println("\nEncode struct with omitempty:")
+	fmt.Println(string(jsonData))
 }
